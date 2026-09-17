@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estudio Técnico: Blindaje de Cádiz ante Tsunamis | Sistema de Detección y Alerta</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #0a0e1a;
+            color: #e0e6f0;
+            line-height: 1.7;
+            padding: 0;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px 30px 60px;
+        }
+        header {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b2d45 100%);
+            border-bottom: 3px solid #00b4d8;
+            padding: 40px 30px 30px;
+            margin-bottom: 30px;
+            border-radius: 0 0 20px 20px;
+        }
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+        header h1 span {
+            color: #00b4d8;
+        }
+        header .subtitle {
+            font-size: 1.05rem;
+            color: #9bb0c9;
+            margin-top: 8px;
+        }
+        .badge-container {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .badge.critical { background: #ff4d6d; color: #fff; }
+        .badge.warning { background: #ffb703; color: #1a1a2e; }
+        .badge.ok { background: #00b4d8; color: #0a0e1a; }
+        .badge.info { background: #2a3f5f; color: #a8c8e8; }
+
+        h2 {
+            font-size: 1.6rem;
+            color: #00b4d8;
+            margin: 45px 0 18px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #1b2d45;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        h3 {
+            font-size: 1.2rem;
+            color: #90e0ef;
+            margin: 28px 0 12px;
+        }
+        p { margin-bottom: 14px; color: #c8d4e4; }
+
+        .card {
+            background: #111a2b;
+            border: 1px solid #1e3048;
+            border-radius: 14px;
+            padding: 24px 28px;
+            margin-bottom: 22px;
+        }
+        .card.highlight {
+            border-left: 5px solid #00b4d8;
+        }
+        .card.danger {
+            border-left: 5px solid #ff4d6d;
+        }
+        .card.success {
+            border-left: 5px solid #00b4d8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 18px 0;
+            font-size: 0.92rem;
+        }
+        th {
+            background: #1b2d45;
+            color: #90e0ef;
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            border-bottom: 2px solid #00b4d8;
+        }
+        td {
+            padding: 11px 14px;
+            border-bottom: 1px solid #1e3048;
+            color: #c8d4e4;
+        }
+        tr:hover td { background: #16223a; }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 18px;
+        }
+        @media (max-width: 900px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+
+        .stat-box {
+            background: #0d1628;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #1e3048;
+        }
+        .stat-box .value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #00b4d8;
+            line-height: 1.2;
+        }
+        .stat-box .label {
+            font-size: 0.82rem;
+            color: #7a90a8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 6px;
+        }
+
+        .bar-chart {
+            margin: 16px 0;
+        }
+        .bar-item {
+            margin-bottom: 14px;
+        }
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #9bb0c9;
+            margin-bottom: 5px;
+        }
+        .bar-track {
+            height: 26px;
+            background: #1b2d45;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #0a0e1a;
+        }
+        .bar-fill.green { background: linear-gradient(90deg, #00b4d8, #48cae4); }
+        .bar-fill.yellow { background: linear-gradient(90deg, #ffb703, #ffd60a); }
+        .bar-fill.red { background: linear-gradient(90deg, #ff4d6d, #ff8fa3); }
+        .bar-fill.gray { background: linear-gradient(90deg, #4a5f7a, #6b829e); }
+
+        .map-container {
+            background: #0d1628;
+            border: 1px solid #1e3048;
+            border-radius: 14px;
+            padding: 20px;
+            margin: 22px 0;
+            overflow-x: auto;
+        }
+        .map-svg {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .arch-diagram {
+            background: #0d1628;
+            border: 1px solid #1e3048;
+            border-radius: 14px;
+            padding: 24px;
+            margin: 22px 0;
+            overflow-x: auto;
+        }
+
+        .recommendation {
+            background: #0f1f35;
+            border-left: 4px solid #00b4d8;
+            border-radius: 0 10px 10px 0;
+            padding: 18px 22px;
+            margin: 16px 0;
+        }
+        .recommendation strong { color: #90e0ef; }
+
+        .rejected {
+            background: #1a1020;
+            border-left: 4px solid #ff4d6d;
+            border-radius: 0 10px 10px 0;
+            padding: 18px 22px;
+            margin: 16px 0;
+        }
+        .rejected strong { color: #ff8fa3; }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            margin-right: 6px;
+        }
+        .tag.fisica { background: #2a3f5f; color: #90e0ef; }
+        .tag.geo { background: #3d2a5f; color: #c8a8ff; }
+        .tag.tech { background: #1a3d3d; color: #7ae0d0; }
+        .tag.legal { background: #3d2a1a; color: #ffc97a; }
+
+        .quote {
+            font-style: italic;
+            color: #7a90a8;
+            border-left: 3px solid #2a3f5f;
+            padding-left: 18px;
+            margin: 18px 0;
+            font-size: 0.95rem;
+        }
+
+        footer {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #1e3048;
+            font-size: 0.82rem;
+            color: #5a7090;
+            text-align: center;
+        }
+
+        .verdict {
+            background: linear-gradient(135deg, #0d1b2a, #1a2a45);
+            border: 2px solid #00b4d8;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+        .verdict h3 {
+            color: #00b4d8;
+            font-size: 1.4rem;
+            margin-bottom: 16px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin: 20px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #1e3048;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 22px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #00b4d8;
+            border: 2px solid #0a0e1a;
+        }
+        .timeline-item .time {
+            font-size: 0.8rem;
+            color: #00b4d8;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .timeline-item .desc {
+            font-size: 0.92rem;
+            color: #c8d4e4;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container" style="padding-bottom:0;">
+        <h1>🌊 Estudio Técnico: <span>Blindaje de Cádiz</span> ante Tsunamis</h1>
+        <p class="subtitle">Arquitectura de detección, comunicación y alerta — Análisis de alternativas con base física y geológica</p>
+        <div class="badge-container">
+            <span class="badge critical">Riesgo Sísmico Activo</span>
+            <span class="badge warning">Sin Boyas DART</span>
+            <span class="badge ok">Tsunami Ready (2026)</span>
+            <span class="badge info">Golfo de Cádiz · Falla Azores-Gibraltar</span>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+
+    <!-- ====== SECCIÓN 1: CONTEXTO FÍSICO ====== -->
+    <h2>⚛️ 1. La Física del Tsunami: Por Qué el Tiempo lo es Todo</h2>
+
+    <p>La velocidad de propagación de un tsunami en aguas profundas se rige por la ecuación de onda larga:</p>
+
+    <div class="card highlight" style="text-align:center; font-size:1.3rem;">
+        <strong>v = √(g · h)</strong>
+        <p style="font-size:0.9rem; margin-top:10px; color:#7a90a8;">donde <em>g</em> = 9.8 m/s² y <em>h</em> = profundidad del agua en metros[reference:0]</p>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <h3>🔢 Cálculo en el Golfo de Cádiz</h3>
+            <p>Con una profundidad media de <strong>3.300 metros</strong> en la zona de generación (falla Azores-Gibraltar), la velocidad del tsunami sería:</p>
+            <p style="font-size:1.2rem; color:#00b4d8;"><strong>v = √(9.8 × 3300) ≈ 180 m/s ≈ 648 km/h</strong></p>
+            <p>En la plataforma continental, a 200 m de profundidad, la velocidad cae a:</p>
+            <p style="font-size:1.2rem; color:#ffb703;"><strong>v = √(9.8 × 200) ≈ 44 m/s ≈ 159 km/h</strong></p>
+        </div>
+        <div class="card">
+            <h3>⏱️ Margen de Reacción para Cádiz</h3>
+            <div class="stat-box">
+                <div class="value">42 min 28 s</div>
+                <div class="label">Tiempo entre terremoto y llegada del tsunami (simulación evento 1755)[reference:1]</div>
+            </div>
+            <p style="margin-top:14px;">Este margen es <strong>el activo más valioso</strong> del sistema. Cada minuto perdido en detección o comunicación reduce drásticamente las posibilidades de evacuación.</p>
+        </div>
+    </div>
+
+    <!-- ====== SECCIÓN 2: AMENAZA GEOLÓGICA ====== -->
+    <h2>🗺️ 2. La Amenaza Real: Geología del Golfo de Cádiz</h2>
+
+    <div class="card danger">
+        <p>El Golfo de Cádiz se sitúa en el límite convergente entre las placas <strong>Euroasiática y Africana</strong>, a lo largo de la fractura Azores-Gibraltar. Esta zona ha generado eventos catastróficos documentados: el <strong>terremoto y tsunami de Lisboa de 1755</strong> (olas de 10-15 m en Cádiz) y el evento de <strong>1969</strong> (magnitud 7.8)[reference:2]. La falla de Horseshoe y la falla Marquês de Pombal son estructuras activas capaces de generar tsunamis[reference:3].</p>
+    </div>
+
+    <h3>🔴 Estructuras Tectónicas Activas</h3>
+    <table>
+        <thead>
+            <tr><th>Estructura</th><th>Profundidad</th><th>Potencial Tsunamigénico</th><th>Distancia a Cádiz</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Falla de Horseshoe</td><td>~4.900 m</td><td>Alto (evento 1755)</td><td>~200 km</td></tr>
+            <tr><td>Falla Marquês de Pombal</td><td>~3.500 m</td><td>Alto</td><td>~250 km</td></tr>
+            <tr><td>Cañón de San Vicente</td><td>70 – 4.900 m</td><td>Moderado (deslizamientos)</td><td>~180 km</td></tr>
+            <tr><td>Falla Averroes (Mar de Alborán)</td><td>~1.000 m</td><td>Moderado (olas hasta 6 m)</td><td>~350 km</td></tr>
+        </tbody>
+    </table>
+
+    <!-- ====== SECCIÓN 3: ESTADO ACTUAL ====== -->
+    <h2>📊 3. Estado Actual de la Protección en Cádiz (Septiembre 2026)</h2>
+
+    <div class="grid-2">
+        <div class="card success">
+            <h3>✅ Implementado</h3>
+            <ul style="list-style:none; padding:0;">
+                <li style="padding:8px 0; border-bottom:1px solid #1e3048;">🏆 <strong>Tsunami Ready</strong> (UNESCO-IOC, junio 2026) — primera capital de provincia española[reference:4]</li>
+                <li style="padding:8px 0; border-bottom:1px solid #1e3048;">📋 <strong>PALMA</strong> — Plan Local de Acción ante Maremotos (pionero en Andalucía)[reference:5]</li>
+                <li style="padding:8px 0; border-bottom:1px solid #1e3048;">🔊 <strong>3 sirenas</strong> instaladas (estadio, Asdrúbal, CENTI) con tecnología dual 4G/UHF</li>
+                <li style="padding:8px 0; border-bottom:1px solid #1e3048;">🪧 <strong>70 señales</strong> de evacuación (objetivo: 270)</li>
+                <li style="padding:8px 0; border-bottom:1px solid #1e3048;">🎯 Simulacro <strong>Respuesta25</strong> (nov. 2025, 20.000 participantes)</li>
+            </ul>
+        </div>
+        <div class="card danger">
+            <h3>❌ Carencias Críticas</h3>
+            <ul style="list-style:none; padding:0;">
+                <li style="padding:8px 0; border-bottom:1px solid #1e3048;">🚫 <strong>0 boyas DART</strong> en el Golfo de Cádiz ni en toda España</li>
+                <li style="padding:8px 0; border-bottom:1px solid #1e3048;">📉 Cobertura de sirenas <strong>muy limitada</strong> (prueba sept. 2026: sonido no llega a gran parte de la ciudad)</li>
+                <li style="padding:8px 0; border-bottom:1px solid #1e3048;">📱 <strong>ES-Alert falló</strong> en simulacro 2025: mensajes con hasta 13 min de retraso o nunca llegaron</li>
+                <li style="padding:8px 0; border-bottom:1px solid #1e3048;">🌊 Sin capacidad de <strong>confirmar</strong> tsunami antes de que llegue a costa</li>
+                <li style="padding:8px 0;">🏙️ Sin plan de evacuación <strong>vertical</strong> para zonas sin ruta a cota segura</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ====== SECCIÓN 4: ANÁLISIS DE TECNOLOGÍAS ====== -->
+    <h2>🔬 4. Análisis de Tecnologías: Qué Sirve y Qué No</h2>
+
+    <h3>4.1 Sensores de Detección</h3>
+
+    <table>
+        <thead>
+            <tr><th>Tecnología</th><th>Principio Físico</th><th>Latencia</th><th>Coste Unitario</th><th>Cobertura Cádiz</th><th>Veredicto</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Boya DART (BPR + superficie)</strong></td>
+                <td>Presión en fondo marino (resolución 1 mm)[reference:6]</td>
+                <td>~3 min en modo evento[reference:7]</td>
+                <td>$250k–$500k + $125k/año OpEx[reference:8]</td>
+                <td>Requiere 3 unidades</td>
+                <td style="color:#7ae0d0;">✅ IMPRESCINDIBLE</td>
+            </tr>
+            <tr>
+                <td><strong>GNSS Ionosférico (TEC)</strong></td>
+                <td>Perturbación de la ionosfera por onda de presión</td>
+                <td>8–32 min (ventaja sobre ola)[reference:9]</td>
+                <td>Bajo (reutiliza red GPS)</td>
+                <td>Ya operativo</td>
+                <td style="color:#7ae0d0;">✅ COMPLEMENTARIO</td>
+            </tr>
+            <tr>
+                <td><strong>Cable SMART (fibra óptica)</strong></td>
+                <td>Presión, temperatura y aceleración sísmica integradas</td>
+                <td>&lt; 1 s</td>
+                <td>+10–15% sobre cable telecom[reference:10]</td>
+                <td>Requiere cable existente</td>
+                <td style="color:#ffb703;">⚠️ LARGO PLAZO</td>
+            </tr>
+            <tr>
+                <td><strong>LoRa (boya a costa)</strong></td>
+                <td>Radiofrecuencia 868/915 MHz</td>
+                <td>2.5–3.7 s[reference:11]</td>
+                <td>&lt; $500</td>
+                <td>Alcance 1.4 km (cero obstáculos)</td>
+                <td style="color:#ff4d6d;">❌ NO VIABLE</td>
+            </tr>
+            <tr>
+                <td><strong>BLE subacuático</strong></td>
+                <td>Bluetooth Low Energy + conversión acústica</td>
+                <td>~1–2 s (3 m alcance)</td>
+                <td>Bajo</td>
+                <td>Alcance metros — inútil en mar abierto[reference:12]</td>
+                <td style="color:#ff4d6d;">❌ DESCARTADO</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>4.2 Comunicación Fondo–Superficie</h3>
+
+    <div class="card">
+        <p>El enlace crítico es el que une el sensor de presión en el fondo (BPR) con la boya de superficie. Las opciones son:</p>
+        <div class="bar-chart">
+            <div class="bar-item">
+                <div class="bar-label"><span>Módem acústico (15–18 kHz) — DART estándar</span><span>~5.000 bps · Latencia 10-13 s</span></div>
+                <div class="bar-track"><div class="bar-fill green" style="width:85%;">✅ ESTÁNDAR PROBADO</div></div>
+            </div>
+            <div class="bar-item">
+                <div class="bar-label"><span>Cable umbilical (fondo-superficie)</span><span>Muy alta fiabilidad pero frágil</span></div>
+                <div class="bar-track"><div class="bar-fill yellow" style="width:45%;">⚠️ RIESGO DE ROTURA</div></div>
+            </div>
+            <div class="bar-item">
+                <div class="bar-label"><span>Luz / LED subacuático</span><span>Alcance limitado (decenas de metros)</span></div>
+                <div class="bar-track"><div class="bar-fill red" style="width:15%;">❌ NO VIABLE</div></div>
+            </div>
+        </div>
+    </div>
+
+    <h3>4.3 Comunicación Superficie–Tierra</h3>
+
+    <table>
+        <thead>
+            <tr><th>Medio</th><th>Alcance</th><th>Fiabilidad</th><th>Coste</th><th>Veredicto</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Satélite Iridium</td><td>Global</td><td>Muy alta (independiente de red terrestre)</td><td>Moderado</td><td style="color:#7ae0d0;">✅ PRIMARIO</td></tr>
+            <tr><td>4G/LTE</td><td>~30 km costa</td><td>Alta pero vulnerable a apagones</td><td>Bajo</td><td style="color:#ffb703;">⚠️ RESPALDO</td></tr>
+            <tr><td>UHF (450 MHz)</td><td>~10–15 km</td><td>Media (requiere repetidores)</td><td>Bajo</td><td style="color:#ffb703;">⚠️ SIRENAS</td></tr>
+            <tr><td>WiFi</td><td>~100 m</td><td>Muy baja</td><td>Muy bajo</td><td style="color:#ff4d6d;">❌ DESCARTADO</td></tr>
+            <tr><td>BLE</td><td>~50 m</td><td>Muy baja</td><td>Muy bajo</td><td style="color:#ff4d6d;">❌ DESCARTADO</td></tr>
+        </tbody>
+    </table>
+
+    <!-- ====== SECCIÓN 5: ARQUITECTURA PROPUESTA ====== -->
+    <h2>🏗️ 5. Arquitectura Propuesta: Sistema Multicapa "Tridente"</h2>
+
+    <p>La solución no es una sola tecnología, sino una <strong>arquitectura redundante en capas</strong> que combine detección oceánica, confirmación ionosférica y difusión masiva resiliente.</p>
+
+    <div class="arch-diagram">
+        <svg viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-width:900px;">
+            <defs>
+                <linearGradient id="ocean" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#0a1a2e"/>
+                    <stop offset="100%" stop-color="#0d2a45"/>
+                </linearGradient>
+                <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#1a2a1a"/>
+                    <stop offset="100%" stop-color="#0d1a0d"/>
+                </linearGradient>
+                <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                    <path d="M0,0 L8,3 L0,6 Z" fill="#00b4d8"/>
+                </marker>
+                <marker id="arrowR" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                    <path d="M0,0 L8,3 L0,6 Z" fill="#ff4d6d"/>
+                </marker>
+            </defs>
+
+            <!-- Fondo oceánico -->
+            <rect x="0" y="0" width="900" height="420" fill="url(#ocean)" rx="12"/>
+            <text x="450" y="30" text-anchor="middle" fill="#2a5a8a" font-size="13" font-weight="600">GOLFO DE CÁDIZ — PERFIL BATIMÉTRICO</text>
+
+            <!-- Superficie del agua -->
+            <path d="M0,80 Q225,70 450,85 Q675,100 900,80" fill="none" stroke="#00b4d8" stroke-width="2" opacity="0.6"/>
+            <text x="20" y="70" fill="#4a7a9a" font-size="11">Superficie</text>
+
+            <!-- Boya DART 1 (más lejana, 200km) -->
+            <circle cx="200" cy="75" r="10" fill="#ff4d6d" opacity="0.9"/>
+            <text x="200" y="58" text-anchor="middle" fill="#ff4d6d" font-size="10" font-weight="700">DART-1</text>
+            <text x="200" y="45" text-anchor="middle" fill="#7a90a8" font-size="9">BPR 4.900m</text>
+
+            <!-- Boya DART 2 (intermedia, 150km) -->
+            <circle cx="500" cy="80" r="10" fill="#ff4d6d" opacity="0.9"/>
+            <text x="500" y="63" text-anchor="middle" fill="#ff4d6d" font-size="10" font-weight="700">DART-2</text>
+            <text x="500" y="50" text-anchor="middle" fill="#7a90a8" font-size="9">BPR 3.300m</text>
+
+            <!-- Boya DART 3 (más cercana, 100km) -->
+            <circle cx="750" cy="85" r="10" fill="#ff4d6d" opacity="0.9"/>
+            <text x="750" y="68" text-anchor="middle" fill="#ff4d6d" font-size="10" font-weight="700">DART-3</text>
+            <text x="750" y="55" text-anchor="middle" fill="#7a90a8" font-size="9">BPR 1.500m</text>
+
+            <!-- Fondo marino -->
+            <path d="M0,350 Q150,280 250,320 Q400,380 500,340 Q650,290 750,350 Q850,380 900,360" fill="url(#ground)" stroke="#2a4a2a" stroke-width="1.5"/>
+            <text x="450" y="400" text-anchor="middle" fill="#3a5a3a" font-size="11">Fondo marino — Fallas activas</text>
+
+            <!-- Enlace acústico (DART 1) -->
+            <line x1="200" y1="90" x2="200" y2="310" stroke="#7ae0d0" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#arrow)"/>
+            <text x="215" y="200" fill="#7ae0d0" font-size="8" transform="rotate(90,215,200)">Acústico 15kHz</text>
+
+            <!-- Enlace acústico (DART 2) -->
+            <line x1="500" y1="95" x2="500" y2="335" stroke="#7ae0d0" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#arrow)"/>
+            <text x="515" y="220" fill="#7ae0d0" font-size="8" transform="rotate(90,515,220)">Acústico 15kHz</text>
+
+            <!-- Enlace acústico (DART 3) -->
+            <line x1="750" y1="100" x2="750" y2="345" stroke="#7ae0d0" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#arrow)"/>
+            <text x="765" y="230" fill="#7ae0d0" font-size="8" transform="rotate(90,765,230)">Acústico 15kHz</text>
+
+            <!-- Satélites Iridium -->
+            <rect x="50" y="10" width="120" height="30" rx="8" fill="#1b2d45" stroke="#00b4d8" stroke-width="1"/>
+            <text x="110" y="30" text-anchor="middle" fill="#00b4d8" font-size="10" font-weight="600">🛰️ IRIDIUM</text>
+            <line x1="110" y1="40" x2="200" y2="70" stroke="#00b4d8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+            <rect x="390" y="10" width="120" height="30" rx="8" fill="#1b2d45" stroke="#00b4d8" stroke-width="1"/>
+            <text x="450" y="30" text-anchor="middle" fill="#00b4d8" font-size="10" font-weight="600">🛰️ IRIDIUM</text>
+            <line x1="450" y1="40" x2="500" y2="75" stroke="#00b4d8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+            <rect x="730" y="10" width="120" height="30" rx="8" fill="#1b2d45" stroke="#00b4d8" stroke-width="1"/>
+            <text x="790" y="30" text-anchor="middle" fill="#00b4d8" font-size="10" font-weight="600">🛰️ IRIDIUM</text>
+            <line x1="790" y1="40" x2="750" y2="78" stroke="#00b4d8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+            <!-- Centro de control -->
+            <rect x="300" y="440" width="300" height="50" rx="12" fill="#0d1b2a" stroke="#00b4d8" stroke-width="2"/>
+            <text x="450" y="462" text-anchor="middle" fill="#00b4d8" font-size="13" font-weight="700">🏢 CENTRO DE CONTROL (CÁDIZ)</text>
+            <text x="450" y="480" text-anchor="middle" fill="#7a90a8" font-size="10">Recepción satelital · Procesamiento · Orden de activación</text>
+
+            <!-- Enlaces satélite a centro -->
+            <line x1="110" y1="40" x2="350" y2="440" stroke="#2a5a8a" stroke-width="1" stroke-dasharray="4,4"/>
+            <line x1="450" y1="40" x2="450" y2="440" stroke="#2a5a8a" stroke-width="1" stroke-dasharray="4,4"/>
+            <line x1="790" y1="40" x2="550" y2="440" stroke="#2a5a8a" stroke-width="1" stroke-dasharray="4,4"/>
+
+            <!-- Difusión a sirenas -->
+            <rect x="50" y="520" width="170" height="40" rx="8" fill="#1a1020" stroke="#ff4d6d" stroke-width="1"/>
+            <text x="135" y="540" text-anchor="middle" fill="#ff4d6d" font-size="9" font-weight="600">🔊 SIRENAS UHF</text>
+            <text x="135" y="553" text-anchor="middle" fill="#7a90a8" font-size="8">560 Hz · 1 km alcance</text>
+
+            <rect x="365" y="520" width="170" height="40" rx="8" fill="#1a1020" stroke="#ffb703" stroke-width="1"/>
+            <text x="450" y="540" text-anchor="middle" fill="#ffb703" font-size="9" font-weight="600">📱 ES-ALERT / 4G</text>
+            <text x="450" y="553" text-anchor="middle" fill="#7a90a8" font-size="8">Móviles · Red celular</text>
+
+            <rect x="680" y="520" width="170" height="40" rx="8" fill="#1a1020" stroke="#00b4d8" stroke-width="1"/>
+            <text x="765" y="540" text-anchor="middle" fill="#00b4d8" font-size="9" font-weight="600">📻 RADIO / TV</text>
+            <text x="765" y="553" text-anchor="middle" fill="#7a90a8" font-size="8">Difusión masiva</text>
+
+            <!-- Líneas de difusión -->
+            <line x1="350" y1="490" x2="135" y2="520" stroke="#ff4d6d" stroke-width="1.5" marker-end="url(#arrowR)"/>
+            <line x1="450" y1="490" x2="450" y2="520" stroke="#ffb703" stroke-width="1.5" marker-end="url(#arrow)"/>
+            <line x1="550" y1="490" x2="765" y2="520" stroke="#00b4d8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+            <!-- GNSS Ionosférico -->
+            <rect x="620" y="440" width="250" height="50" rx="12" fill="#0d1a2a" stroke="#c8a8ff" stroke-width="1.5"/>
+            <text x="745" y="460" text-anchor="middle" fill="#c8a8ff" font-size="11" font-weight="600">📡 GNSS IONOSFÉRICO (TEC)</text>
+            <text x="745" y="478" text-anchor="middle" fill="#7a90a8" font-size="9">Confirmación · 8-32 min de ventaja</text>
+            <line x1="550" y1="465" x2="620" y2="465" stroke="#c8a8ff" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+        </svg>
+    </div>
+
+    <!-- ====== SECCIÓN 6: MAPA DE DESPLIEGUE ====== -->
+    <h2>🗺️ 6. Mapa de Despliegue Propuesto</h2>
+
+    <div class="map-container">
+        <svg viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-width:900px;">
+            <defs>
+                <radialGradient id="coast" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#1a3a2a"/>
+                    <stop offset="100%" stop-color="#0d1a12"/>
+                </radialGradient>
+                <marker id="mArrow" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto">
+                    <path d="M0,0 L6,2.5 L0,5 Z" fill="#00b4d8"/>
+                </marker>
+            </defs>
+
+            <!-- Fondo -->
+            <rect width="900" height="500" fill="#0a1628" rx="12"/>
+
+            <!-- Zona de costa (Cádiz) -->
+            <path d="M750,50 Q780,120 760,200 Q740,280 780,350 Q820,420 800,480 L900,480 L900,50 Z" fill="#1a2a1a" stroke="#2a4a2a" stroke-width="1.5" opacity="0.7"/>
+            <text x="830" y="250" text-anchor="middle" fill="#4a7a4a" font-size="12" font-weight="700" transform="rotate(90,830,250)">PENÍNSULA IBÉRICA</text>
+            <text x="810" y="160" fill="#6a9a6a" font-size="11" font-weight="700">CÁDIZ</text>
+
+            <!-- Zona oceánica -->
+            <text x="300" y="40" text-anchor="middle" fill="#2a5a8a" font-size="14" font-weight="600">GOLFO DE CÁDIZ</text>
+            <text x="300" y="60" text-anchor="middle" fill="#1a3a5a" font-size="10">Océano Atlántico</text>
+
+            <!-- Falla Azores-Gibraltar (línea) -->
+            <line x1="100" y1="420" x2="700" y2="120" stroke="#ff4d6d" stroke-width="2.5" stroke-dasharray="10,6" opacity="0.7"/>
+            <text x="350" y="290" fill="#ff4d6d" font-size="10" font-weight="600" transform="rotate(-30,350,290)">FALLA AZORES-GIBRALTAR</text>
+
+            <!-- Falla Horseshoe -->
+            <ellipse cx="450" cy="200" rx="60" ry="25" fill="none" stroke="#ff8fa3" stroke-width="1.5" stroke-dasharray="6,4" transform="rotate(-25,450,200)"/>
+            <text x="450" y="185" text-anchor="middle" fill="#ff8fa3" font-size="9" font-weight="600">F. HORSESHOE</text>
+
+            <!-- Boyas DART -->
+            <!-- DART 1 -->
+            <circle cx="250" cy="280" r="12" fill="#ff4d6d" stroke="#0a0e1a" stroke-width="2"/>
+            <text x="250" y="305" text-anchor="middle" fill="#ff4d6d" font-size="10" font-weight="700">DART-1</text>
+            <text x="250" y="318" text-anchor="middle" fill="#7a90a8" font-size="8">(36.5°N, 8.5°W)</text>
+            <text x="250" y="330" text-anchor="middle" fill="#7a90a8" font-size="8">Prof: 4.900m</text>
+
+            <!-- DART 2 -->
+            <circle cx="480" cy="200" r="12" fill="#ff4d6d" stroke="#0a0e1a" stroke-width="2"/>
+            <text x="480" y="225" text-anchor="middle" fill="#ff4d6d" font-size="10" font-weight="700">DART-2</text>
+            <text x="480" y="238" text-anchor="middle" fill="#7a90a8" font-size="8">(36.2°N, 7.2°W)</text>
+            <text x="480" y="250" text-anchor="middle" fill="#7a90a8" font-size="8">Prof: 3.300m</text>
+
+            <!-- DART 3 -->
+            <circle cx="660" cy="150" r="12" fill="#ff4d6d" stroke="#0a0e1a" stroke-width="2"/>
+            <text x="660" y="175" text-anchor="middle" fill="#ff4d6d" font-size="10" font-weight="700">DART-3</text>
+            <text x="660" y="188" text-anchor="middle" fill="#7a90a8" font-size="8">(36.0°N, 6.5°W)</text>
+            <text x="660" y="200" text-anchor="middle" fill="#7a90a8" font-size="8">Prof: 1.500m</text>
+
+            <!-- Cobertura estimada (círculos) -->
+            <circle cx="250" cy="280" r="100" fill="none" stroke="#ff4d6d" stroke-width="0.8" opacity="0.3"/>
+            <circle cx="480" cy="200" r="100" fill="none" stroke="#ff4d6d" stroke-width="0.8" opacity="0.3"/>
+            <circle cx="660" cy="150" r="100" fill="none" stroke="#ff4d6d" stroke-width="0.8" opacity="0.3"/>
+
+            <!-- Cádiz marker -->
+            <rect x="790" y="170" width="20" height="20" rx="4" fill="#00b4d8" stroke="#0a0e1a" stroke-width="2"/>
+            <text x="800" y="210" text-anchor="middle" fill="#00b4d8" font-size="11" font-weight="700">CÁDIZ</text>
+
+            <!-- Líneas de comunicación -->
+            <line x1="250" y1="280" x2="800" y2="180" stroke="#00b4d8" stroke-width="0.8" stroke-dasharray="4,4" opacity="0.5" marker-end="url(#mArrow)"/>
+            <line x1="480" y1="200" x2="800" y2="180" stroke="#00b4d8" stroke-width="0.8" stroke-dasharray="4,4" opacity="0.5" marker-end="url(#mArrow)"/>
+            <line x1="660" y1="150" x2="800" y2="180" stroke="#00b4d8" stroke-width="0.8" stroke-dasharray="4,4" opacity="0.5" marker-end="url(#mArrow)"/>
+
+            <!-- Leyenda -->
+            <rect x="30" y="420" width="280" height="65" rx="8" fill="#0d1628" stroke="#1e3048" stroke-width="1"/>
+            <circle cx="50" cy="440" r="6" fill="#ff4d6d"/>
+            <text x="65" y="444" fill="#c8d4e4" font-size="10">Boya DART propuesta</text>
+            <line x1="45" y1="460" x2="65" y2="460" stroke="#ff4d6d" stroke-width="2" stroke-dasharray="6,3"/>
+            <text x="75" y="464" fill="#c8d4e4" font-size="10">Falla tsunamigénica</text>
+            <line x1="45" y1="478" x2="65" y2="478" stroke="#00b4d8" stroke-width="0.8" stroke-dasharray="4,4"/>
+            <text x="75" y="482" fill="#c8d4e4" font-size="10">Enlace satelital</text>
+
+            <!-- Escala -->
+            <text x="750" y="470" fill="#5a7090" font-size="9">0</text>
+            <line x1="760" y1="467" x2="840" y2="467" stroke="#5a7090" stroke-width="1"/>
+            <text x="850" y="470" fill="#5a7090" font-size="9">100 km</text>
+        </svg>
+    </div>
+
+    <!-- ====== SECCIÓN 7: COSTES ====== -->
+    <h2>💰 7. Análisis de Costes y Esfuerzo</h2>
+
+    <div class="grid-3">
+        <div class="stat-box">
+            <div class="value">~1.5 M€</div>
+            <div class="label">Inversión inicial (3 DART + infraestructura)</div>
+        </div>
+        <div class="stat-box">
+            <div class="value">~375 k€/año</div>
+            <div class="label">OpEx anual (mantenimiento 3 DART)</div>
+        </div>
+        <div class="stat-box">
+            <div class="value">+10–15%</div>
+            <div class="label">Coste incremental SMART Cable (si se instala nuevo cable)</div>
+        </div>
+    </div>
+
+    <table style="margin-top:20px;">
+        <thead>
+            <tr><th>Componente</th><th>Cantidad</th><th>Coste Unitario</th><th>Coste Total</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Boya DART-4G (BPR + superficie + Iridium)</td><td>3</td><td>~250.000 €[reference:13]</td><td>750.000 €</td></tr>
+            <tr><td>Mantenimiento anual (por boya)</td><td>3</td><td>~125.000 €/año[reference:14]</td><td>375.000 €/año</td></tr>
+            <tr><td>Sirenas adicionales (cobertura completa)</td><td>12–15</td><td>~15.000 €</td><td>~200.000 €</td></tr>
+            <tr><td>Integración GNSS ionosférico</td><td>1 sistema</td><td>Reutiliza red existente</td><td>~50.000 €</td></tr>
+            <tr><td>Estación de control y software</td><td>1</td><td>—</td><td>~100.000 €</td></tr>
+            <tr style="font-weight:700; color:#00b4d8;"><td>TOTAL (CapEx)</td><td>—</td><td>—</td><td>~1.100.000 €</td></tr>
+        </tbody>
+    </table>
+
+    <div class="card highlight">
+        <p><strong>💡 Perspectiva:</strong> El coste total del sistema (1,5 M€ + 375 k€/año) es <strong>inferior al 0,5% del presupuesto anual del Ayuntamiento de Cádiz</strong> y representa una fracción mínima del coste potencial de un tsunami (solo el evento de 1755 causó daños equivalentes a miles de millones de euros actuales).</p>
+    </div>
+
+    <!-- ====== SECCIÓN 8: BLINDAJE CONTRA ALGAS ====== -->
+    <h2>🌿 8. "Blindaje" Contra Algas Flotantes</h2>
+
+    <div class="card">
+        <p>Las algas flotantes (como el <em>Sargassum</em>) representan una amenaza para los sensores de superficie, pero <strong>no afectan al sensor de presión del fondo marino (BPR)</strong>, que es la pieza clave del sistema DART. El BPR mide la presión de la columna de agua desde el fondo, donde las algas no llegan[reference:15].</p>
+        <p>Las medidas de mitigación para la boya de superficie incluyen:</p>
+        <ul style="padding-left:20px; color:#c8d4e4;">
+            <li>Recubrimiento anti-incrustación en la boya y línea de fondeo.</li>
+            <li>Diseño hidrodinámico que evita la acumulación de biomasa flotante.</li>
+            <li>Sensores de presión redundantes en el BPR que no se ven afectados por algas superficiales.</li>
+            <li>Mantenimiento periódico (cada 6-12 meses) para limpieza de la superficie.</li>
+        </ul>
+    </div>
+
+    <!-- ====== SECCIÓN 9: RECOMENDACIONES ====== -->
+    <h2>✅ 9. Recomendaciones Finales</h2>
+
+    <div class="recommendation">
+        <strong>🔴 PRIORIDAD 1 — Desplegar 3 boyas DART en el Golfo de Cádiz</strong>
+        <p>Sin boyas DART, España no puede <em>confirmar</em> si un terremoto ha generado un tsunami. Esta es la carencia más grave y debe resolverse antes que cualquier otra medida. Coordinar con Portugal para cobertura transfronteriza.</p>
+    </div>
+
+    <div class="recommendation">
+        <strong>🟡 PRIORIDAD 2 — Integrar GNSS ionosférico como capa de confirmación</strong>
+        <p>La red GPS existente en España puede procesarse para detectar perturbaciones ionosféricas asociadas a tsunamis. Proporciona <strong>8–32 minutos de ventaja</strong> sobre la llegada de la ola[reference:16] y no requiere hardware nuevo en el mar.</p>
+    </div>
+
+    <div class="recommendation">
+        <strong>🟡 PRIORIDAD 3 — Ampliar red de sirenas y diversificar canales</strong>
+        <p>Las 3 sirenas actuales son insuficientes. Objetivo: <strong>cobertura de 1 km por sirena</strong> en toda la zona de riesgo (frecuencia 560 Hz, patrón ISO 8201)[reference:17]. Combinar con ES-Alert, radio FM y altavoces en edificios públicos.</p>
+    </div>
+
+    <div class="recommendation">
+        <strong>🟢 PRIORIDAD 4 — Explorar SMART Cable en futuros cables submarinos</strong>
+        <p>Si se instala un nuevo cable de telecomunicaciones en la zona, integrar sensores SMART con un <strong>coste incremental del 10-15%</strong>. Ofrece latencia de milisegundos y datos sísmicos continuos[reference:18].</p>
+    </div>
+
+    <div class="recommendation">
+        <strong>🟢 PRIORIDAD 5 — Desarrollar plan de evacuación vertical</strong>
+        <p>Para zonas de Cádiz sin ruta rápida a cota segura, designar edificios como <strong>refugios verticales</strong> con señalización clara. El margen de 42 minutos es suficiente si la alerta llega a tiempo.</p>
+    </div>
+
+    <!-- ====== SECCIÓN 10: VEREDICTO ====== -->
+    <div class="verdict">
+        <h3>⚖️ Veredicto Técnico: ¿Realidad o Ilusión?</h3>
+        <p>La preparación actual de Cádiz es <strong>mayoritariamente formal</strong>: tiene un plan, un reconocimiento internacional y algunas sirenas, pero <strong>carece del componente más crítico: la capacidad de detectar y confirmar un tsunami en el océano antes de que llegue a la costa</strong>.</p>
+        <p style="margin-top:14px;">La arquitectura propuesta "Tridente" (3 DART + GNSS ionosférico + difusión multicanal) convierte la protección de <strong>teórica</strong> a <strong>operativa</strong>. El coste es asumible y la tecnología está probada. Lo que falta no es ciencia ni presupuesto: es <strong>voluntad política y coordinación institucional</strong>.</p>
+        <p style="margin-top:14px; color:#ffb703;"><strong>Sin boyas DART, Cádiz sigue dependiendo de estimaciones sísmicas indirectas para un evento que llega en 42 minutos. Eso no es protección: es esperanza.</strong></p>
+    </div>
+
+    <!-- ====== SECCIÓN 11: LO QUE SE DESCARTA ====== -->
+    <h2>🚫 10. Tecnologías Descartadas (y Por Qué)</h2>
+
+    <div class="rejected">
+        <strong>❌ BLE subacuático</strong> — Alcance de metros. Inútil para comunicación fondo-superficie en profundidades de 1.500-4.900 m[reference:19].
+    </div>
+    <div class="rejected">
+        <strong>❌ WiFi en boya</strong> — Alcance ~100 m. No sirve para enlace boya-costa ni boya-satélite.
+    </div>
+    <div class="rejected">
+        <strong>❌ LoRa como enlace principal</strong> — Alcance máximo probado: 1.4 km en condiciones ideales[reference:20]. Insuficiente para distancias oceánicas.
+    </div>
+    <div class="rejected">
+        <strong>❌ Cable umbilical fondo-superficie</strong> — Alta fiabilidad pero extremadamente frágil ante arrastre de anclas, corrientes y sismos. El DART usa enlace acústico precisamente para evitar este riesgo[reference:21].
+    </div>
+    <div class="rejected">
+        <strong>❌ Luz/LED subacuático</strong> — Atenuación exponencial en agua. Alcance práctico &lt; 50 m.
+    </div>
+
+    <!-- ====== SECCIÓN 12: FUENTES ====== -->
+    <h2>📚 11. Fuentes y Referencias Verificables</h2>
+
+    <table>
+        <thead>
+            <tr><th>Fuente</th><th>Tipo</th><th>Dato Clave</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>NOAA — Tsunami Propagation</td><td>Oficial (EE.UU.)</td><td>Fórmula v=√(gh); velocidad 765 km/h a 4.600 m[reference:22]</td></tr>
+            <tr><td>NOAA PMEL — DART System</td><td>Oficial (EE.UU.)</td><td>Resolución 1 mm; modo evento cada 15 s; enlace acústico 15-18 kHz[reference:23]</td></tr>
+            <tr><td>IEEE OCEANS 2026 — OFDM Acústico</td><td>Revisado por pares</td><td>Latencia 10-13 s; throughput 5.000 bps; backhaul LTE/Starlink[reference:24]</td></tr>
+            <tr><td>UNESCO-IOC — Tsunami Ready Cádiz</td><td>Oficial (ONU)</td><td>Reconocimiento junio 2026; primera capital de provincia española[reference:25]</td></tr>
+            <tr><td>Science.gov — Geología Golfo de Cádiz</td><td>Científico</td><td>Falla Azores-Gibraltar activa; eventos 1755 y 1969[reference:26]</td></tr>
+            <tr><td>ESA — ALTRUIST (GNSS Ionosférico)</td><td>Agencia Espacial</td><td>Detección 8-32 min antes de la ola; reutiliza red GPS[reference:27]</td></tr>
+            <tr><td>Submarine Cables Summit 2026</td><td>Industria</td><td>SMART Cable operativo; +10-15% coste incremental[reference:28]</td></tr>
+            <tr><td>PNDB — Batimetría Golfo de Cádiz</td><td>Datos abiertos</td><td>Modelo digital 60 m resolución; profundidades hasta 4.900 m[reference:29]</td></tr>
+            <tr><td>Civil Defence NZ — Frecuencias sirena</td><td>Gobierno</td><td>560 Hz; alcance 1 km; patrón ISO 8201[reference:30]</td></tr>
+            <tr><td>OpenEI — Costes DART</td><td>Energía/Infra</td><td>CapEx ~250.000 $; OpEx ~125.000 $/año[reference:31]</td></tr>
+        </tbody>
+    </table>
+
+    <footer>
+        <p>Estudio técnico elaborado con base en fuentes oficiales, científicas y de ingeniería verificables · Septiembre 2026</p>
+        <p style="margin-top:6px;">Las coordenadas de las boyas son propuestas orientativas basadas en la batimetría del Golfo de Cádiz y deben validarse mediante estudios de campo.</p>
+    </footer>
+
+</div>
+
+</body>
+</html>
